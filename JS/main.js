@@ -1,5 +1,3 @@
-
-
 function blackhole(element) {
     const container = document.querySelector(element);
     const h = container.offsetHeight;
@@ -147,38 +145,46 @@ function blackhole(element) {
     }
 
     // Event listeners
-    const centerHover = document.querySelector('.centerHover');
-    
-    centerHover.addEventListener('click', function() {
-        collapse = false;
-        expanse = true;
-        returning = false;
-        this.classList.add('open');
-        
-        // Start the return cycle after full expansion (20-30 seconds)
-        setTimeout(() => {
-            expanse = false;
-            returning = true;
-            
-            // After particles return, reset to normal orbit
-            setTimeout(() => {
-                returning = false;
-                this.classList.remove('open');
-            }, 8000); // 8 seconds to return slowly
-        }, 25000); // 25 seconds of expansion experience
-    });
-    
-    centerHover.addEventListener('mouseover', function() {
-        if (expanse === false) {
-            collapse = true;
-        }
-    });
-    
-    centerHover.addEventListener('mouseout', function() {
-        if (expanse === false) {
-            collapse = false;
-        }
-    });
+const centerHover = document.querySelector('.centerHover');
+
+// Make sure the element exists before attaching listeners
+if (centerHover) {
+  // Accessibility: make focusable and announce as a button for assistive tech
+  if (!centerHover.hasAttribute('tabindex')) centerHover.setAttribute('tabindex', '0');
+  if (!centerHover.hasAttribute('role')) centerHover.setAttribute('role', 'button');
+  if (!centerHover.hasAttribute('aria-label')) centerHover.setAttribute('aria-label', 'Enter site');
+
+  centerHover.addEventListener('click', function() {
+  
+    collapse = false;
+    expanse = true;
+    returning = false;
+    this.classList.add('open');
+
+    // Navigate to profile page immediately
+    window.location.href = 'mainPage.html';
+  });
+
+  // Keyboard support: Enter or Space triggers the same behavior
+  centerHover.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      this.click();
+    }
+  });
+
+  centerHover.addEventListener('mouseover', function() {
+    if (expanse === false) {
+      collapse = true;
+    }
+  });
+
+  centerHover.addEventListener('mouseout', function() {
+    if (expanse === false) {
+      collapse = false;
+    }
+  });
+}
 
     // Animation loop
     function loop() {
