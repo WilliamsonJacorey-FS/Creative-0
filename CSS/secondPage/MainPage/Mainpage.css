@@ -1,30 +1,44 @@
+/* Combined stylesheet
+   - Main layout, About card, gallery, socials, footer
+   - Clean, deduplicated, and optimized
+   - Short human comments explain each block
+*/
 
+/* Reset and base */
+*,
+*::before,
+*::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-/* Basic reset */
-* { box-sizing: border-box; margin: 0; padding: 0; }
-
-/* Theme variables */
-:root{
-  --nav-h: 60px;
-  --bg: #0b0b0b;
-  --text: #e6e6e6;
-  --muted: rgba(230,230,230,0.85);
-  --accent: #ff8a00;
-  --gap: 1rem;
-}
-
-/* Page base */
 html, body {
   height: 100%;
-  background: var(--bg);
-  color: var(--text);
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  scroll-behavior: smooth; /* smooth scrolling for nav anchors */
+  background: #0b0b0b;
+  color: #e6e6e6;
+  scroll-behavior: smooth;
 }
 
-/* Fixed header / nav */
+/* Theme variables */
+:root {
+  --nav-h: 64px;
+  --max-width: 1200px;
+  --card-width: 880px;
+  --card-padding: 1.25rem;
+  --card-bg: rgba(10,10,10,0.65);
+  --card-radius: 14px;
+  --photo-size: 180px;
+  --photo-border: 6px;
+  --text: #e6e6e6;
+  --muted: rgba(230,230,230,0.78);
+  --accent: #ff8a00;
+  --gap: 1rem;
+  --gallery-gap: 0.75rem;
+  --radius: 12px;
+  --social-gap-top: 6rem; /* space above socials; adjust to taste */
+}
+
+/* Header - fixed and centered */
 header {
   position: fixed;
   inset: 0 0 auto 0;
@@ -33,30 +47,28 @@ header {
   align-items: center;
   justify-content: center;
   background: rgba(0,0,0,0.45);
-  z-index: 50;
+  z-index: 60;
   border-bottom: 1px solid rgba(255,255,255,0.03);
   padding: 0 1rem;
 }
 
-/* Nav list */
 header nav ul {
   list-style: none;
   display: flex;
-  gap: calc(var(--gap) * 0.8);
+  gap: calc(var(--gap) * 0.6);
   align-items: center;
 }
 
-/* Links */
 header nav a {
   color: var(--muted);
   text-decoration: none;
-  padding: 0.45rem 0.7rem;
-  border-radius: 6px;
-  font-weight: 600;
-  transition: background-color 160ms ease, color 160ms ease, transform 120ms ease;
+  padding: 0.45rem 0.75rem;
+  border-radius: 8px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  transition: transform 140ms ease, background 140ms ease, color 140ms ease;
 }
 
-/* Hover / focus (pseudo-class) */
 header nav a:hover,
 header nav a:focus {
   background: rgba(255,255,255,0.04);
@@ -65,19 +77,19 @@ header nav a:focus {
   outline: none;
 }
 
-/* Active link */
 header nav a.active {
   background: var(--accent);
   color: #111;
-  box-shadow: 0 6px 18px rgba(255,138,0,0.12);
+  box-shadow: 0 8px 24px rgba(255,138,0,0.12);
 }
 
-/* Ensure main content sits below header */
+/* Main spacing */
 main {
   padding-top: calc(var(--nav-h) + 1rem);
+  min-height: calc(100vh - var(--nav-h));
 }
 
-/* Each section fills most of the viewport */
+/* Generic section container */
 .container {
   min-height: calc(100vh - var(--nav-h) - 2rem);
   display: grid;
@@ -87,23 +99,21 @@ main {
   padding: 1rem;
 }
 
-/* Image fills the section (use your local files: img/img1.jpeg etc.) */
+/* Section images */
 .container img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
   transition: transform 400ms ease, opacity 300ms ease;
-  will-change: transform, opacity;
 }
 
-/* Subtle zoom on hover/focus-within */
 .container:hover img,
 .container:focus-within img {
   transform: scale(1.02);
 }
 
-/* Optional overlay for better contrast if you add text later */
+/* Contrast overlay */
 .container::before {
   content: "";
   position: absolute;
@@ -112,12 +122,279 @@ main {
   pointer-events: none;
 }
 
+/* About container - center card */
+.about {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - var(--nav-h));
+  padding: 2rem 1rem;
+  background: transparent;
+}
+
+/* Profile card - two-column grid */
+.about .profile-card {
+  width: min(var(--card-width), 94%);
+  max-width: var(--card-width);
+  background: var(--card-bg);
+  color: var(--text);
+  padding: calc(var(--card-padding) * 1.25);
+  border-radius: var(--card-radius);
+  box-shadow: 0 18px 50px rgba(0,0,0,0.6);
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: var(--gap);
+  align-items: center;
+  z-index: 20;
+  backdrop-filter: blur(6px);
+  margin: 0 auto;
+  position: relative;
+}
+
+/* Decorative glow behind avatar */
+.about .profile-card::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: calc(50% - 8rem);
+  transform: translateX(-50%);
+  width: calc(var(--photo-size) * 1.6);
+  height: calc(var(--photo-size) * 1.6);
+  background: radial-gradient(circle, rgba(255,138,0,0.06), transparent 40%);
+  filter: blur(12px);
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* Responsive stack */
+@media (max-width: 720px) {
+  .about .profile-card {
+    grid-template-columns: 1fr;
+    padding: 1rem;
+  }
+}
+
+/* Avatar wrapper - circular mask, no hover scale */
+.profile-avatar {
+  width: var(--photo-size);
+  height: var(--photo-size);
+  border-radius: 50%;
+  overflow: hidden;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: var(--photo-border) solid rgba(255,255,255,0.06);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.45);
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  flex-shrink: 0;
+  transition: box-shadow 200ms ease;
+}
+
+/* Focus state - visible but no size change */
+.profile-avatar:focus,
+.profile-avatar.active {
+  box-shadow: 0 18px 40px rgba(255,138,0,0.12);
+  outline: none;
+}
+
+/* Avatar image */
+.profile-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transform-origin: center;
+  will-change: auto;
+}
+
+/* Profile content */
+.profile-content { padding: 0 0.25rem; }
+
+.profile-content h2 {
+  margin: 0 0 0.35rem 0;
+  font-size: 1.6rem;
+  line-height: 1.05;
+  color: #fff;
+  letter-spacing: -0.2px;
+}
+
+/* Accent under the name */
+.profile-content h2::after {
+  content: "";
+  display: block;
+  width: 48px;
+  height: 6px;
+  background: linear-gradient(90deg, var(--accent), rgba(255,138,0,0.6));
+  border-radius: 4px;
+  margin-top: 0.6rem;
+}
+
+.profile-content .bio {
+  color: var(--muted);
+  margin: 0.8rem 0 1rem 0;
+  max-width: 60ch;
+  line-height: 1.5;
+}
+
+/* Quick facts chips */
+.quick-facts {
+  list-style: none;
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  padding: 0;
+  margin: 0 0 1rem 0;
+}
+
+.quick-facts li {
+  background: rgba(255,255,255,0.03);
+  color: var(--muted);
+  padding: 0.35rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.92rem;
+}
+
+/* Contact button */
+.contact-btn {
+  display: inline-block;
+  background: var(--accent);
+  color: #111;
+  padding: 0.55rem 0.9rem;
+  border-radius: 10px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: transform 160ms ease, box-shadow 160ms ease;
+  box-shadow: 0 8px 20px rgba(255,138,0,0.08);
+}
+
+.contact-btn:hover,
+.contact-btn:focus {
+  transform: translateY(-4px);
+  box-shadow: 0 18px 40px rgba(255,138,0,0.18);
+  outline: none;
+}
+
+/* Focus outlines */
+.profile-card a:focus,
+.profile-card button:focus {
+  outline: 3px solid rgba(255,138,0,0.18);
+  outline-offset: 4px;
+}
+
+/* Small-screen adjustments */
+@media (max-width: 420px) {
+  :root { --photo-size: 120px; --card-padding: 0.9rem; }
+  .about .profile-card { padding: 0.9rem; }
+  .profile-content h2 { font-size: 1.25rem; }
+}
+
+/* Favorites gallery */
+.favorites .gallery {
+  width: min(var(--max-width), 96%);
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--gallery-gap);
+  padding: 1rem;
+  margin: 0 auto;
+  align-items: stretch;
+  justify-items: stretch;
+}
+
+.favorites .gallery figure {
+  margin: 0;
+  overflow: hidden;
+  border-radius: var(--radius);
+  background: rgba(255,255,255,0.02);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.45);
+  display: block;
+  height: 220px;
+}
+
+@media (min-width: 1100px) {
+  .favorites .gallery figure { height: 260px; }
+}
+
+.favorites .gallery img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 300ms ease, filter 300ms ease;
+}
+
+.favorites .gallery figure:hover img,
+.favorites .gallery figure:focus-within img {
+  transform: scale(1.04);
+  filter: brightness(1.02);
+}
+
+@media (max-width: 920px) {
+  .favorites .gallery { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 520px) {
+  .favorites .gallery { grid-template-columns: 1fr; }
+  .favorites .gallery figure { height: 200px; }
+}
+
+/* Socials - extra top spacing so it sits below gallery */
+.socials {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 3.25rem 1rem;
+  margin-top: var(--social-gap-top);
+  background: transparent;
+}
+
+.social-row {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  width: min(900px, 96%);
+  padding: 0.25rem 0.5rem;
+}
+
+.social-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.05rem;
+  background: rgba(255,255,255,0.03);
+  color: var(--muted);
+  border-radius: 10px;
+  text-decoration: none;
+  font-weight: 700;
+  transition: transform 160ms ease, background 160ms ease, color 160ms ease;
+}
+
+.social-link:hover,
+.social-link:focus {
+  transform: translateY(-4px);
+  background: var(--accent);
+  color: #111;
+  outline: none;
+}
+
 /* Footer */
 footer {
   text-align: center;
   padding: 1.25rem 1rem;
   color: rgba(255,255,255,0.6);
   font-size: 0.95rem;
+  background: linear-gradient(180deg, rgba(0,0,0,0.02), rgba(0,0,0,0.06));
+}
+
+/* Utilities */
+.visually-hidden {
+  position: absolute !important;
+  height: 1px; width: 1px;
+  overflow: hidden;
+  clip: rect(1px, 1px, 1px, 1px);
+  white-space: nowrap;
 }
 
 /* Small-screen tweaks */
